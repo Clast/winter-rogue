@@ -25,7 +25,7 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
-boardColor = (0, 0, 0)
+boardColor = (0, 0, 50)
 
 #Here we initialize the pygame surface and create the Displaysurface which will hold our main screen, passing along the board size variables*32 for actual pixel size. 
 pygame.init()
