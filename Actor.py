@@ -2,8 +2,6 @@ import random, sys, pygame
 from Item_Database import *
 from Map_Object import *
 from Menu import *
-#from Dungeon import *
-#from Main import *
 
 class Actor(Map_Object):#Actor inherits from Map_Object to be able to post to the map
 
@@ -193,7 +191,6 @@ class Player(Actor):#This class is for only the user-created player
         target = object
         break
 
- # print target.__class__.__name__
   if tiletarget is None: #Does the tile exist?
    print ("You are attempting to move outside the map!")
   elif tiletarget.isPassable != 1: #Is the tile passable?
@@ -215,7 +212,6 @@ class Player(Actor):#This class is for only the user-created player
     
     
   elif target is None: #Otherwise move
-    #print("You successfully move!")
     self.xcoordinate += dx
     self.ycoordinate += dy
         
@@ -234,7 +230,6 @@ class Monster(Actor):#This class contains standard stats and location variables 
   self.Img = pygame.image.load(imgpath)
   index=0
   self.speed = 100
-  #print self.xcoordinate,self.ycoordinate
   
   for item in Rarity_Database[self.level]:#Populate randomly generated loot based on rarity
    item=int(item.rstrip())
@@ -270,7 +265,7 @@ class NPC(Actor):
   self.name = "NPC"
   if type == 'shopkeeper':
    for item in Rarity_Database[self.level]:#Populate randomly generated loot based on rarity
-    #print item
+
     item=int(item.rstrip())
     chance=random.randint(1,10000)
     if chance <= item*5:
