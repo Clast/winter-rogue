@@ -29,6 +29,7 @@ boardColor = (0, 0, 50)
 
 #Here we initialize the pygame surface and create the Displaysurface which will hold our main screen, passing along the board size variables*32 for actual pixel size. 
 pygame.init()
+
 DISPLAYSURF = pygame.display.set_mode((boardWidth*32,boardHeight*32), 0, 32)
 pygame.display.set_caption('Dev') #Window Title
 DISPLAYSURF.fill(WHITE) #Fill the screen area with white.
@@ -105,18 +106,28 @@ def playersTurn(): #Pauses the game and allows the player to take a turn
         DISPLAYSURF.blit(invscreen, (invmenu.xloc,invmenu.yloc ))
         pygame.display.update()
         for event in pygame.event.get():
+		#1.Check to see what events have been triggered
+		#2.If the user left clicks their mouse, grab the current x,y coordinates and save them
+		#3.When the user lets go of the left mouse, determine the difference between the initial click and where the user's mouse currently is
+		#4.Adjust the menu's location based on the difference acquired in 3.
          if event.type==MOUSEBUTTONDOWN and event.button == 1 :
-          cursx,cursy=event.pos
-          if cursx>invmenu.xloc and cursx<invmenu.xloc+200 and cursy >invmenu.yloc and cursy < invmenu.yloc+10:  
-           boolean=True
-          while(boolean):
-           for event in pygame.event.get():
-            if event.type==MOUSEBUTTONUP and event.button == 1 :
-             boolean=False
-             relx, rely = event.pos
-             invmenu.xloc=invmenu.xloc+(relx-cursx)
-             invmenu.yloc=invmenu.yloc+(rely-cursy)
+		  cursx,cursy=event.pos
+		  if cursx>invmenu.xloc and cursx<invmenu.xloc+200 and cursy >invmenu.yloc and cursy < invmenu.yloc+10:
+		   while pygame.event.peek(MOUSEBUTTONUP)==0:		
+			print pygame.event.peek(MOUSEBUTTONUP)
+			relx, rely = pygame.mouse.get_pos()
+			invmenu.xloc=invmenu.xloc+(relx-cursx)
+			invmenu.yloc=invmenu.yloc+(rely-cursy)
+			cursx=relx
+			cursy=rely
+			redrawScreen()
+			drawObjects()
+			DISPLAYSURF.blit(invscreen, (invmenu.xloc,invmenu.yloc ))
+			pygame.display.update()
          elif event.type==MOUSEBUTTONDOWN and event.button == 3:
+		 #1. Check to see what events have been triggered
+		 #2. If the user right clicks their mouse, grab the current x,y coordinates and save them
+		 #3. If the coordinates correlate with the location of any item in the menu, equip it
           cursx,cursy=event.pos
           if(cursx>invmenu.xloc+10 and cursx<invmenu.xloc+42 and cursy>invmenu.yloc+20 and cursy<invmenu.yloc+52):
            player.equip_item(0)
@@ -136,44 +147,40 @@ def playersTurn(): #Pauses the game and allows the player to take a turn
            redrawScreen()
            paused = 0             
             
-      if (event.key == K_c): #character
-            paused = 1
-            while (paused == 1):
-                menu = Menu(player)
-                DISPLAYSURF.blit(menu.Character(), ((boardWidth*32)/2, (boardHeight*32)/2))
-                pygame.display.update()
-                for event in pygame.event.get():
-                    if event.type == KEYDOWN:
-                        if event.key == K_p:
-                            paused = 0
-                            redrawScreen()
-                        else:
-                            pass
-      if (event.key == K_e): #equipment
+      if (event.key == K_c): #equipment
             paused = 1
             while (paused == 1):
                 drawMap(boardWidth, boardHeight)
                 drawObjects()
                 equipmenu=player.charactermenu
                 equipscreen=player.charactersheet
-                print player.charactermenu.xloc,player.charactermenu.yloc
                 DISPLAYSURF.blit(equipscreen, (player.charactermenu.xloc,player.charactermenu.yloc))
                 pygame.display.update()
                 
                 for event in pygame.event.get():
                  if event.type==MOUSEBUTTONDOWN and event.button == 1 :
-                  cursx,cursy=event.pos
-                  if cursx>player.charactermenu.xloc and cursx<player.charactermenu.xloc+200 and cursy >player.charactermenu.yloc and cursy < player.charactermenu.yloc+10:  
-                   boolean=True
-                   while(boolean):
-                    for event in pygame.event.get():
-                     if event.type==MOUSEBUTTONUP and event.button == 1 :
-                      boolean=False
-                      relx, rely = event.pos
-                      player.charactermenu.xloc=player.charactermenu.xloc+(relx-cursx)
-                      player.charactermenu.yloc=player.charactermenu.yloc+(rely-cursy)
+				  cursx,cursy=event.pos
+				  #1.Check to see what events have been triggered
+				  #2.If the user left clicks their mouse, grab the current x,y coordinates and save them
+		          #3.When the user lets go of the left mouse, determine the difference between the initial click and where the user lets go
+		          #4.Adjust the menu's location based on the difference acquired in 3.
+				  if cursx>equipmenu.xloc and cursx<equipmenu.xloc+200 and cursy >equipmenu.yloc and cursy < equipmenu.yloc+10:
+				   while pygame.event.peek(MOUSEBUTTONUP)==0:
+					relx, rely = pygame.mouse.get_pos()
+					equipmenu.xloc=equipmenu.xloc+(relx-cursx)
+					equipmenu.yloc=equipmenu.yloc+(rely-cursy)
+					cursx=relx
+					cursy=rely
+					redrawScreen()
+					drawObjects()
+					DISPLAYSURF.blit(equipscreen, (equipmenu.xloc,equipmenu.yloc ))
+					pygame.display.update()
                  elif event.type==MOUSEBUTTONDOWN and event.button == 3:
+				#1. Check to see what events have been triggered
+				#2. If the user right clicks their mouse, grab the current x,y coordinates and save them
+				#3. If the coordinates correlate with the location of any item in the menu, equip it
                   cursx,cursy=event.pos
+
                   if(cursx>player.charactermenu.xloc+10 and cursx<player.charactermenu.xloc+42 and cursy>player.charactermenu.yloc+10 and cursy<player.charactermenu.yloc+42 and player.equipment.check_slot('head') == False):
                    index = 0
                    for item in player.equipment.items:
