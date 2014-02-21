@@ -40,7 +40,7 @@ class Player(Actor):#This class is for only the user-created player
   self.equipment=Equipment()
   self.inventory=Inventory()
   self.charactermenu = EquipmentMenu(self,32*32/2-100,25*32/2-100)
-  print 32*32/2,25*32/2
+  #print 32*32/2,25*32/2
   self.charactersheet=self.charactermenu.menusurface
   self.charactermenu.Update()
   self.inventorymenu=InventoryMenu(self,32*32/2-75,25*32/2-45)
