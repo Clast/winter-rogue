@@ -150,7 +150,7 @@ class EquipmentMenu(Menu):
   self.BLUE = (0, 0, 255)
   self.BLACK = (0,0,0)
   self.width=200
-  self.height=200
+  self.height=300
   self.Player = Player
   #X,Y coordinates of the surface itself
   self.xcoord = 0
@@ -186,44 +186,11 @@ class EquipmentMenu(Menu):
    if item.type=='1h' or item.type=='2h':
     self.menusurface.blit(item.image,(self.xcoord+10,self.ycoord+160))
    if item.type=='shield':
-    self.menusurface.blit(item.image,(self.xcoord+150,self.ycoord+160))
-        
-    def Equipment(self):
-        self.menusurface = pygame.Surface((500,300))
-        self.menusurface.fill(self.BLACK)
-        
-        fontObj = pygame.font.Font('freesansbold.ttf', 16) 
-        
-        iteminformationnumber = fontObj.render("No.", True, self.WHITE, self.BLACK)
-        iteminformationname = fontObj.render("Name", True, self.WHITE,self.BLACK)
-        iteminformationdamage = fontObj.render("Damage", True, self.WHITE, self.BLACK)
-        iteminformationhealth = fontObj.render("Health", True, self.WHITE, self.BLACK)
-        iteminformationtype = fontObj.render("Type", True, self.WHITE, self.BLACK)
-        
-        xcoord = 50
-        ycoord = 30
-        itemindex = 1
-        
-        self.menusurface.blit(iteminformationnumber, (xcoord, ycoord-20))
-        self.menusurface.blit(iteminformationname, (xcoord+50, ycoord-20))
-        self.menusurface.blit(iteminformationdamage, (xcoord+200, ycoord-20))
-        self.menusurface.blit(iteminformationhealth, (xcoord+300, ycoord-20))
-        self.menusurface.blit(iteminformationtype, (xcoord+400, ycoord-20))
-        
-        for item in self.Player.equipment.items:
-            itemnumber = fontObj.render(str(itemindex), True, self.WHITE, self.BLACK)
-            itemname = fontObj.render(str(item.name), True, self.WHITE, self.BLACK)
-            itemdamage = fontObj.render(str(item.damage), True, self.WHITE, self.BLACK)
-            itemhealth = fontObj.render(str(item.health), True, self.WHITE, self.BLACK)
-            itemtype = fontObj.render(str(item.type), True, self.WHITE, self.BLACK)
-            itemindex += 1
-            
-            self.menusurface.blit(itemnumber, (xcoord, ycoord)) #Consider making the xcoordinate addition for subsequent values a ratio of screen size versus hardcoded
-            self.menusurface.blit(itemname, (xcoord+50, ycoord))
-            self.menusurface.blit(itemdamage, (xcoord+200,ycoord))
-            self.menusurface.blit(itemhealth, (xcoord+300,ycoord))
-            self.menusurface.blit(itemtype, (xcoord+400,ycoord))
-            ycoord += 25
+    self.menusurface.blit(item.image,(self.xcoord+150,self.ycoord+160))   
+	
+  fontObj = pygame.font.Font('freesansbold.ttf', 16)       
+  player_health_info = fontObj.render("Health:" + str(self.Player.current_health) + " / " + str(self.Player.total_health), True, self.WHITE, self.BLACK)
+  player_damage_info = fontObj.render("Damage:" + str(self.Player.total_damage) + " (" + str(self.Player.base_damage) + " + " + str(self.Player.bonus_damage) + " )", True, self.WHITE, self.BLACK)
+  self.menusurface.blit(player_health_info, (self.xcoord+25, self.ycoord+200))
+  self.menusurface.blit(player_damage_info, (self.xcoord+25, self.ycoord+220))
 
-        return self.menusurface
-        
