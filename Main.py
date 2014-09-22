@@ -4,6 +4,7 @@ from Tile import *
 from Dungeon import *
 from Actor import *
 from Menu import *
+from Log import *
 
 #Database importing for Item_Database and Rarity Database
 database=Item_Database()
@@ -25,12 +26,10 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
-boardColor = (0, 0, 50)
 
 #Here we initialize the pygame surface and create the Displaysurface which will hold our main screen, passing along the board size variables*32 for actual pixel size. 
 pygame.init()
-
-DISPLAYSURF = pygame.display.set_mode((boardWidth*32,boardHeight*32), 0, 32)
+DISPLAYSURF = pygame.display.set_mode((boardWidth*32,boardHeight*32+160), 0, 32)
 pygame.display.set_caption('Dev') #Window Title
 DISPLAYSURF.fill(WHITE) #Fill the screen area with white.
 
@@ -42,7 +41,6 @@ dungeon = Dungeon(boardWidth, boardHeight)
 
 #All elements in the object list will be printed when drawObjects are called.
 objectlist = [] 
-
 #Code to generate a monster a random location
 dungeon.room_Generation(boardWidth,boardHeight)
 dungeon.spawn_Monsters(boardWidth,boardHeight,Rarity_Database,database,objectlist)
@@ -55,8 +53,9 @@ objectlist.append(player)
 objectlist.append(healer)
 objectlist.append(shopkeeper)
 
-
- 
+stats=StatsMenu(player)
+#global log
+#log = Log() 
 #Function to draw the map to the board.
 def drawMap(boardWidth, boardHeight): 
  
@@ -72,7 +71,10 @@ def drawObjects():
 def redrawScreen():
  drawMap(boardWidth, boardHeight)
  drawObjects()
+ redrawStats() #Updates the current player stats at the end of each turn
+ redrawLog() #Updates the log after each player turn
  pygame.display.update()
+ 
        
 def playersTurn(): #Pauses the game and allows the player to take a turn
  playersturn = True
@@ -99,35 +101,26 @@ def playersTurn(): #Pauses the game and allows the player to take a turn
        while (paused == 1):
         drawMap(boardWidth, boardHeight)
         drawObjects()
-        
+        boolean = False
         invmenu=player.inventorymenu
         invmenu.Update()
         invscreen=player.inventorysheet
         DISPLAYSURF.blit(invscreen, (invmenu.xloc,invmenu.yloc ))
         pygame.display.update()
+		
         for event in pygame.event.get():
-		#1.Check to see what events have been triggered
-		#2.If the user left clicks their mouse, grab the current x,y coordinates and save them
-		#3.When the user lets go of the left mouse, determine the difference between the initial click and where the user's mouse currently is
-		#4.Adjust the menu's location based on the difference acquired in 3.
          if event.type==MOUSEBUTTONDOWN and event.button == 1 :
-		  cursx,cursy=event.pos
-		  if cursx>invmenu.xloc and cursx<invmenu.xloc+200 and cursy >invmenu.yloc and cursy < invmenu.yloc+10:
-		   while pygame.event.peek(MOUSEBUTTONUP)==0:		
-			print pygame.event.peek(MOUSEBUTTONUP)
-			relx, rely = pygame.mouse.get_pos()
-			invmenu.xloc=invmenu.xloc+(relx-cursx)
-			invmenu.yloc=invmenu.yloc+(rely-cursy)
-			cursx=relx
-			cursy=rely
-			redrawScreen()
-			drawObjects()
-			DISPLAYSURF.blit(invscreen, (invmenu.xloc,invmenu.yloc ))
-			pygame.display.update()
+          cursx,cursy=event.pos
+          if cursx>invmenu.xloc and cursx<invmenu.xloc+200 and cursy >invmenu.yloc and cursy < invmenu.yloc+10:  
+           boolean=True
+          while(boolean):
+           for event in pygame.event.get():
+            if event.type==MOUSEBUTTONUP and event.button == 1 :
+             boolean=False
+             relx, rely = event.pos
+             invmenu.xloc=invmenu.xloc+(relx-cursx)
+             invmenu.yloc=invmenu.yloc+(rely-cursy)
          elif event.type==MOUSEBUTTONDOWN and event.button == 3:
-		 #1. Check to see what events have been triggered
-		 #2. If the user right clicks their mouse, grab the current x,y coordinates and save them
-		 #3. If the coordinates correlate with the location of any item in the menu, equip it
           cursx,cursy=event.pos
           if(cursx>invmenu.xloc+10 and cursx<invmenu.xloc+42 and cursy>invmenu.yloc+20 and cursy<invmenu.yloc+52):
            player.equip_item(0)
@@ -146,41 +139,32 @@ def playersTurn(): #Pauses the game and allows the player to take a turn
           if event.key == K_p:
            redrawScreen()
            paused = 0             
-            
-      if (event.key == K_c): #equipment
+
+      if (event.key == K_e): #equipment
             paused = 1
             while (paused == 1):
                 drawMap(boardWidth, boardHeight)
                 drawObjects()
                 equipmenu=player.charactermenu
                 equipscreen=player.charactersheet
+                print player.charactermenu.xloc,player.charactermenu.yloc
                 DISPLAYSURF.blit(equipscreen, (player.charactermenu.xloc,player.charactermenu.yloc))
                 pygame.display.update()
                 
                 for event in pygame.event.get():
                  if event.type==MOUSEBUTTONDOWN and event.button == 1 :
-				  cursx,cursy=event.pos
-				  #1.Check to see what events have been triggered
-				  #2.If the user left clicks their mouse, grab the current x,y coordinates and save them
-		          #3.When the user lets go of the left mouse, determine the difference between the initial click and where the user lets go
-		          #4.Adjust the menu's location based on the difference acquired in 3.
-				  if cursx>equipmenu.xloc and cursx<equipmenu.xloc+200 and cursy >equipmenu.yloc and cursy < equipmenu.yloc+10:
-				   while pygame.event.peek(MOUSEBUTTONUP)==0:
-					relx, rely = pygame.mouse.get_pos()
-					equipmenu.xloc=equipmenu.xloc+(relx-cursx)
-					equipmenu.yloc=equipmenu.yloc+(rely-cursy)
-					cursx=relx
-					cursy=rely
-					redrawScreen()
-					drawObjects()
-					DISPLAYSURF.blit(equipscreen, (equipmenu.xloc,equipmenu.yloc ))
-					pygame.display.update()
-                 elif event.type==MOUSEBUTTONDOWN and event.button == 3:
-				#1. Check to see what events have been triggered
-				#2. If the user right clicks their mouse, grab the current x,y coordinates and save them
-				#3. If the coordinates correlate with the location of any item in the menu, equip it
                   cursx,cursy=event.pos
-
+                  if cursx>player.charactermenu.xloc and cursx<player.charactermenu.xloc+200 and cursy >player.charactermenu.yloc and cursy < player.charactermenu.yloc+10:  
+                   boolean=True
+                   while(boolean):
+                    for event in pygame.event.get():
+                     if event.type==MOUSEBUTTONUP and event.button == 1 :
+                      boolean=False
+                      relx, rely = event.pos
+                      player.charactermenu.xloc=player.charactermenu.xloc+(relx-cursx)
+                      player.charactermenu.yloc=player.charactermenu.yloc+(rely-cursy)
+                 elif event.type==MOUSEBUTTONDOWN and event.button == 3:
+                  cursx,cursy=event.pos
                   if(cursx>player.charactermenu.xloc+10 and cursx<player.charactermenu.xloc+42 and cursy>player.charactermenu.yloc+10 and cursy<player.charactermenu.yloc+42 and player.equipment.check_slot('head') == False):
                    index = 0
                    for item in player.equipment.items:
@@ -261,6 +245,13 @@ def speedAdjust(objectlist):
  objectlist = sorted(objectlist, key=lambda object:object.speed, reverse = True)
  return objectlist
  
+def redrawStats():
+  stats.Update(player)
+  DISPLAYSURF.blit(stats.menusurface, (stats.xcoord, stats.ycoord))
+
+def redrawLog():
+  DISPLAYSURF.blit(log.menusurface, (log.xcoord, log.ycoord))
+
 #The game structure is as follows:
 #1) Draw the map and allow the player to take his first turn.
 #2) After the player takes his first turn, enter the game loop.
@@ -271,9 +262,10 @@ def speedAdjust(objectlist):
 
 objectlist = speedAdjust(objectlist) #Adjust the objects according to speed
 redrawScreen() #First draw the screen
+redrawLog() #Updates the log after each player turn
 playersTurn() #Player ALWAYS gets first turn. This is to avoid a monster attacking you when you enter the level before you have a chance to respond or receiving an attack before the screen is drawn.
 redrawScreen() #Update the screen after the player takes the first turn, and then begin game loop.
-
+redrawLog() #Updates the log after each player turn
  
 while True:
 
@@ -282,6 +274,8 @@ while True:
  for object in objectlist:
   if object == player:
    playersTurn()
+   redrawStats() #Updates the current player stats at the end of each turn
+   redrawLog() #Updates the log after each player turn
   else:
     pass
    #print(object.name + "growls") #Here, the monster will take their turn
@@ -289,3 +283,5 @@ while True:
 
     
  redrawScreen()
+ redrawStats() #Updates the current player stats at the end of each turn
+ redrawLog() #Updates the log after each player turn

@@ -61,3 +61,12 @@ class Tile:
   print "Returning isPassable value of: %s" % self.isPassable
   return self.isPassable
   
+
+#Test code
+#newtile = Tile(1,1,0)
+
+#newtile.get_xcoordinate()
+#newtile.get_ycoordinate()
+#newtile.get_coordinates()
+#newtile.get_image()
+#newtile.get_isPassable()

@@ -2,7 +2,12 @@ import random, sys, pygame
 from Item_Database import *
 from Map_Object import *
 from Menu import *
-
+from Log import *
+#from Main import *
+#from Dungeon import *
+#from Main import *
+global log
+log = Log()
 class Actor(Map_Object):#Actor inherits from Map_Object to be able to post to the map
 
  def __init__(self, name, health, attackdamage, level):#These stats are shared between the Player and Monster Classes
@@ -40,7 +45,7 @@ class Player(Actor):#This class is for only the user-created player
   self.equipment=Equipment()
   self.inventory=Inventory()
   self.charactermenu = EquipmentMenu(self,32*32/2-100,25*32/2-100)
-  #print 32*32/2,25*32/2
+  print 32*32/2,25*32/2
   self.charactersheet=self.charactermenu.menusurface
   self.charactermenu.Update()
   self.inventorymenu=InventoryMenu(self,32*32/2-75,25*32/2-45)
@@ -160,6 +165,7 @@ class Player(Actor):#This class is for only the user-created player
   self.gold=self.gold+Monster.gold
   
   for items in Monster.loot.items:
+   log.addEvent((1,"You looted " + items.name))
    self.inventory.add_item(items)
 
  def battleLose(self):
@@ -191,19 +197,20 @@ class Player(Actor):#This class is for only the user-created player
         target = object
         break
 
+ # print target.__class__.__name__
   if tiletarget is None: #Does the tile exist?
-   print ("You are attempting to move outside the map!")
+   log.addEvent((1,"You are attempting to move outside the map!"))
   elif tiletarget.isPassable != 1: #Is the tile passable?
-   print ("The tile you are attempting to move into is not passable!")
+   log.addEvent((1,"The tile you are attempting to move into is not passable!"))
   elif target is not None: #If there is a monster, attack it
    if target.__class__.__name__=='Monster':
-    print "You attack %s, dealing %s damage." % (target.name,self.total_damage)
+    log.addEvent((1,"You attack %s, dealing %s damage." % (target.name,self.total_damage)))
     target.current_health=target.current_health-self.total_damage
     if target.current_health<=0:
      self.battleWin(target)
      objectlist.remove(target)
     else:
-      print "%s attacks you back, dealing %s damage." % (target.name,target.damage)
+      log.addEvent((1,"%s attacks you back, dealing %s damage." % (target.name,target.damage)))
       self.current_health=self.current_health-target.damage
       if self.current_health<=0:
        self.battleLose()
@@ -212,6 +219,7 @@ class Player(Actor):#This class is for only the user-created player
     
     
   elif target is None: #Otherwise move
+    #print("You successfully move!")
     self.xcoordinate += dx
     self.ycoordinate += dy
         
@@ -230,6 +238,7 @@ class Monster(Actor):#This class contains standard stats and location variables 
   self.Img = pygame.image.load(imgpath)
   index=0
   self.speed = 100
+  #print self.xcoordinate,self.ycoordinate
   
   for item in Rarity_Database[self.level]:#Populate randomly generated loot based on rarity
    item=int(item.rstrip())
@@ -265,7 +274,7 @@ class NPC(Actor):
   self.name = "NPC"
   if type == 'shopkeeper':
    for item in Rarity_Database[self.level]:#Populate randomly generated loot based on rarity
-
+    #print item
     item=int(item.rstrip())
     chance=random.randint(1,10000)
     if chance <= item*5:
