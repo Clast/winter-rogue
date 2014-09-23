@@ -44,6 +44,7 @@ class Dungeon:
     if object.xcoordinate==xcoord and object.ycoordinate==ycoord:
      empty=False
    if self.map[xcoord][ycoord].isPassable == True and empty:#If there is no wall at the current X,Y coordinates
+    print(xcoord,ycoord)
     objectlist.append(Monster(xcoord*32, ycoord*32, name,monsterLVL*100,monsterLVL*10,monsterLVL,image, Rarity_Database, Item_Database))
     amount=amount-1
  
