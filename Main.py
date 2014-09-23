@@ -5,6 +5,7 @@ from Dungeon import *
 from Actor import *
 from Menu import *
 from Log import *
+from LevelHandler import *
 
 #Database importing for Item_Database and Rarity Database
 database=Item_Database()
@@ -19,6 +20,7 @@ for line in open("LootRarity.csv"):
 #Set the width and height of the board. For pixel size, multiply each variable by 32.
 boardWidth = 32
 boardHeight = 25
+dungeonLevel = 0
 
 #Set Colors - Colors in pyGame are in RGB format. This is out of convenience.
 BLACK = (0, 0, 0)
@@ -40,18 +42,18 @@ dungeon = Dungeon(boardWidth, boardHeight)
 
 
 #All elements in the object list will be printed when drawObjects are called.
-objectlist = [] 
+#dungeon.objectlist = [] 
 #Code to generate a monster a random location
 dungeon.room_Generation(boardWidth,boardHeight)
-dungeon.spawn_Monsters(boardWidth,boardHeight,Rarity_Database,database,objectlist)
+dungeon.spawn_Monsters(boardWidth,boardHeight,Rarity_Database,database,dungeon.objectlist)
 
-#Append some items to the objectlist
+#Append some items to the dungeon.objectlist
 healer= NPC(64,0,200,1,'healer', Rarity_Database, database)
 shopkeeper= NPC(0,64,200,1,'shopkeeper', Rarity_Database, database)
 player = Player(32,32,'images/player.png',"Name",5000,50)
-objectlist.append(player)
-objectlist.append(healer)
-objectlist.append(shopkeeper)
+dungeon.objectlist.append(player)
+dungeon.objectlist.append(healer)
+dungeon.objectlist.append(shopkeeper)
 
 stats=StatsMenu(player)
 #global log
@@ -65,7 +67,7 @@ def drawMap(boardWidth, boardHeight):
 
  #Function to draw the objects to the board      
 def drawObjects():
-   for object in objectlist:
+   for object in dungeon.objectlist:
        DISPLAYSURF.blit(object.Img, (object.xcoordinate, object.ycoordinate))
        
 def redrawScreen():
@@ -85,17 +87,19 @@ def playersTurn(): #Pauses the game and allows the player to take a turn
     sys.exit()
    elif event.type == KEYDOWN: 
       if (event.key == K_d):
-          player.move(32,0,dungeon.map,objectlist) #Modify the game state when some action is entered. The move function takes target coordinates, the map[] list of a Dungeon object (see Dungeon.py), and the object list.
+          player.move(32,0,dungeon.map,dungeon.objectlist) #Modify the game state when some action is entered. The move function takes target coordinates, the map[] list of a Dungeon object (see Dungeon.py), and the object list.
           playersturn = False
       if (event.key == K_a):
-          player.move(-32,0,dungeon.map,objectlist)
+          player.move(-32,0,dungeon.map,dungeon.objectlist)
           playersturn = False
       if (event.key == K_w):
-          player.move(0,-32,dungeon.map,objectlist)
+          player.move(0,-32,dungeon.map,dungeon.objectlist)
           playersturn = False
       if (event.key == K_s):
-          player.move(0,32,dungeon.map,objectlist)
+          player.move(0,32,dungeon.map,dungeon.objectlist)
           playersturn = False
+
+	
       if (event.key == K_i): #inventory
        paused = 1
        while (paused == 1):
@@ -242,7 +246,7 @@ def playersTurn(): #Pauses the game and allows the player to take a turn
                    paused = 0
 
 def speedAdjust(objectlist):
- objectlist = sorted(objectlist, key=lambda object:object.speed, reverse = True)
+ objectlist = sorted(dungeon.objectlist, key=lambda object:object.speed, reverse = True)
  return objectlist
  
 def redrawStats():
@@ -260,7 +264,7 @@ def redrawLog():
     #3c) When you get to the player, pause the game and allow him to take his turn.
     #3d) After everyone has taken their turns, refresh the screen with the new game state.
 
-objectlist = speedAdjust(objectlist) #Adjust the objects according to speed
+dungeon.objectlist = speedAdjust(dungeon.objectlist) #Adjust the objects according to speed
 redrawScreen() #First draw the screen
 redrawLog() #Updates the log after each player turn
 playersTurn() #Player ALWAYS gets first turn. This is to avoid a monster attacking you when you enter the level before you have a chance to respond or receiving an attack before the screen is drawn.
@@ -269,9 +273,9 @@ redrawLog() #Updates the log after each player turn
  
 while True:
 
- objectlist = speedAdjust(objectlist)
+ dungeon.objectlist = speedAdjust(dungeon.objectlist)
     
- for object in objectlist:
+ for object in dungeon.objectlist:
   if object == player:
    playersTurn()
    redrawStats() #Updates the current player stats at the end of each turn

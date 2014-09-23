@@ -11,6 +11,7 @@ class Dungeon:
  def __init__(self,boardWidth,boardHeight): #It receives the boardHeight and boardWidth in tiles. Columns = Width, Rows = Height
   self.boardHeight = boardHeight
   self.boardWidth = boardWidth
+  self.objectlist = []
   curx = 0
   cury = 0
   
