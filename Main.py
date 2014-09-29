@@ -103,10 +103,8 @@ def playersTurn(): #Pauses the game and allows the player to take a turn
             elif event.type == KEYDOWN:
                 if (event.key == K_o):
                     levelhandler.move_floor(-1)
+                    levelhandler.dungeonlist[levelhandler.currentlevel].objectlist.append(player)
                     redrawScreen()
-
-
-
 
                 if (event.key == K_p):
                     levelhandler.move_floor(1)
