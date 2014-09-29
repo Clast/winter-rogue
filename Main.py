@@ -15,7 +15,7 @@ increment=0
 for line in open("LootRarity.csv"):
     Rarity_Database[increment]=line.split(",")
     increment=increment+1
-fix = fix
+
 
 
 #Set the width and height of the board. For pixel size, multiply each variable by 32.
@@ -122,6 +122,9 @@ def playersTurn(): #Pauses the game and allows the player to take a turn
                 if (event.key == K_s):
                     player.move(0,32,levelhandler.dungeonlist[levelhandler.currentlevel].map,levelhandler.dungeonlist[levelhandler.currentlevel].objectlist)
                     playersturn = False
+                if (event.key == K_h):
+                    print ('Some Bullshit')
+
 
 
 
