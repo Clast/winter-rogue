@@ -18,5 +18,3 @@ class LevelHandler:
         if (len(self.dungeonlist)	> 0):
             self.currentlevel = self.currentlevel + i
 
-levelhandler = LevelHandler()
-levelhandler.dungeonlist.append('a')

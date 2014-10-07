@@ -257,6 +257,57 @@ class Monster(Actor):#This class contains standard stats and location variables 
         print "Total health: %d" % self.health
         print "Total damage: %d" % self.damage
         print "Gold from killing", self.gold
+        
+    def move(self, dx, dy, map, objectlist):
+
+    #The move function is special in that it accepts the map and objectlist on which you are moving (along with the change in x and y). It follows the following basic structure:
+    #1) Determine if anything exists at the destination, tile or object.
+    #2) If something exists, perform the associated action (whether denying movement or attacking a monster)
+    #3) If nothing exists, move to that tile and set the player coordinates to the target.
+
+        tiletarget = None
+        target = None
+        newx = self.xcoordinate + dx
+        newy = self.ycoordinate + dy
+        mapincrement = 0 
+
+        for row in map:
+            for tile in row:#Check to see if the tile exists at new location, if so, assign the tile to tiletarget
+                if tile.xcoordinate == newx and tile.ycoordinate == newy:
+                    tiletarget = tile
+                    break
+
+
+        for object in objectlist: #Check to see if anything exists at target location, if so, assign the object to target
+            if object.xcoordinate == newx and object.ycoordinate == newy:
+                target = object
+                break
+
+    # print target.__class__.__name__
+        if tiletarget is None: #Does the tile exist?
+            log.addEvent((1,"A monster is attempting to move outside the map!"))
+        elif tiletarget.isPassable != 1: #Is the tile passable?
+            log.addEvent((1,"A monster is trying to move into an impassable tile!"))
+        elif target is not None: #If there is a monster, attack it
+            if target.__class__.__name__=='Player':
+                log.addEvent((1,"A monster attacks %s, dealing %s damage." % (target.name,self.total_damage)))
+                target.current_health=target.current_health-self.total_damage
+                #if target.current_health<=0:
+                 #   self.battleWin(target)
+                  #  objectlist.remove(target)
+                #else:
+                 #   log.addEvent((1,"%s attacks you back, dealing %s damage." % (target.name,target.damage)))
+                  #  self.current_health=self.current_health-target.damage
+                   # if self.current_health<=0:
+                    #    self.battleLose()
+            #elif target.__class__.__name__=='NPC':
+             #   target.engage_dialogue(self)
+
+
+        elif target is None: #Otherwise move
+            #print("A monster moves")
+            self.xcoordinate += dx
+            self.ycoordinate += dy
 
 class NPC(Actor):
     def __init__(self, x, y, health, level, type, Rarity_Database, Item_Database):

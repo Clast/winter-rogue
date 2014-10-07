@@ -64,8 +64,8 @@ levelhandler.dungeonlist.append(dungeon)
 levelhandler.move_floor(1)
 
 newdungeon = Dungeon(boardWidth,boardHeight)
-newdungeon.room_Generation(boardWidth,boardHeight)
-newdungeon.spawn_Monsters(boardWidth,boardHeight,Rarity_Database,database,newdungeon.objectlist)
+newdungeon.testing_Generation(boardWidth,boardHeight)
+newdungeon.testing_Monsters(boardWidth,boardHeight,Rarity_Database,database,newdungeon.objectlist)
 #Append the map to the LevelHandler
 levelhandler.dungeonlist.append(newdungeon)
 
@@ -108,6 +108,7 @@ def playersTurn(): #Pauses the game and allows the player to take a turn
 
                 if (event.key == K_p):
                     levelhandler.move_floor(1)
+                    levelhandler.dungeonlist[levelhandler.currentlevel].objectlist.append(player)
                     redrawScreen()
                 if (event.key == K_d):
                     player.move(32,0,levelhandler.dungeonlist[levelhandler.currentlevel].map,levelhandler.dungeonlist[levelhandler.currentlevel].objectlist) #Modify the game state when some action is entered. The move function takes target coordinates, the map[] list of a Dungeon object (see Dungeon.py), and the object list.
@@ -309,7 +310,7 @@ while True:
             redrawLog() #Updates the log after each player turn
         else:
             pass
-            #print(object.name + "growls") #Here, the monster will take their turn
+            print(object.name + " growls") #Here, the monster will take their turn
 
 
 

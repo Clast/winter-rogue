@@ -49,6 +49,20 @@ class Dungeon:
                 objectlist.append(Monster(xcoord*32, ycoord*32, name,monsterLVL*100,monsterLVL*10,monsterLVL,image, Rarity_Database, Item_Database))
                 amount=amount-1
 
+    
+    def testing_Generation(self,width,height): #This function generates a testing arena.
+        for y in xrange(self.boardHeight):          
+            self.map[0][y].set_case(1)
+            self.map[self.boardHeight+6][y].set_case(1)
+        for x in xrange(self.boardWidth):
+            self.map[x][0].set_case(1)
+            self.map[x][19].set_case(1)
+        pass
+    
+    def testing_Monsters(self,boardWidth,boardHeight,Rarity_Database,Item_Database, objectlist):
+        objectlist.append(Monster(10*32,5*32,'Freezy',100,10,1,'images/monsterlvl1.png',Rarity_Database,Item_Database))
+        objectlist.append(Monster(15*32,5*32,'Burny',100,10,1,'images/monsterlvl2.png',Rarity_Database,Item_Database))
+        objectlist.append(Monster(20*32,5*32,'Clyde',100,10,1,'images/monsterlvl3.png',Rarity_Database,Item_Database))
     def room_Generation(self,width,height):#This function generates a completely random mapLVL with rooms of varying sizes
         numberofRooms=100#random.randint(1,(width-1)/5)
         numberofAttempts=1000
