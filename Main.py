@@ -309,8 +309,12 @@ while True:
             redrawStats() #Updates the current player stats at the end of each turn
             redrawLog() #Updates the log after each player turn
         else:
+            if object.type == 'monster':
+                object.AI.Execute()
+                #print(object.name + " growls") #Here, the monster will take their turn
+            
             pass
-            print(object.name + " growls") #Here, the monster will take their turn
+            
 
 
 

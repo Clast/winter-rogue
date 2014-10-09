@@ -4,6 +4,7 @@ from Item_Database import *
 from Map_Object import *
 from Menu import *
 from Log import *
+from StateMachine import *
 #from Main import *
 #from Dungeon import *
 #from Main import *
@@ -227,6 +228,7 @@ class Player(Actor):#This class is for only the user-created player
 class Monster(Actor):#This class contains standard stats and location variables along with a loot list that contains items that the player can loot
     def __init__(self, xcoord,ycoord, name, health, attackdamage, level,imgpath, Rarity_Database, Item_Database):
         self.name=name
+        self.type='monster'
         self.health=health
         self.current_health=health
         self.damage=attackdamage
@@ -237,9 +239,19 @@ class Monster(Actor):#This class contains standard stats and location variables 
         self.xcoordinate=xcoord
         self.ycoordinate=ycoord
         self.Img = pygame.image.load(imgpath)
+        self.AI = StateMachine(self)
         index=0
         self.speed = 100
         #print self.xcoordinate,self.ycoordinate
+        
+        self.AI.states['Attack'] = Attack()
+        self.AI.states['Flee'] = Flee()
+        self.AI.states['Rest'] = Rest()
+        self.AI.transitions["toAttack"] = Transition("Attack")
+        self.AI.transitions["toFlee"] = Transition('Flee')
+        self.AI.transitions["toRest"] = Transition('Rest')
+        
+        self.AI.SetState("Rest")
 
         for item in Rarity_Database[self.level]:#Populate randomly generated loot based on rarity
             item=int(item.rstrip())
