@@ -238,10 +238,16 @@ class Monster(Actor):#This class contains standard stats and location variables 
         self.imgpath = imgpath
         self.xcoordinate=xcoord
         self.ycoordinate=ycoord
+        self.tilecoordinatex = xcoord/32
+        self.tilecoordinatey = ycoord/32
         self.Img = pygame.image.load(imgpath)
         self.AI = StateMachine(self)
+        self.target = None
         index=0
         self.speed = 100
+        self.canSee = {}
+        
+        
         #print self.xcoordinate,self.ycoordinate
         
         self.AI.states['Attack'] = Attack()
@@ -269,6 +275,181 @@ class Monster(Actor):#This class contains standard stats and location variables 
         print "Total health: %d" % self.health
         print "Total damage: %d" % self.damage
         print "Gold from killing", self.gold
+    
+    def look(self, dungeon):
+        sensedistance = 4 #Sight range is this value - 1
+        target = None
+        tiletarget = None
+        
+        
+        ##THIS IS THE UGLIEST CODE I HAVE EVER WRITTEN, WARNING
+        ##Look up
+        for x in range(1,sensedistance):
+            x+1
+            newx = self.tilecoordinatex 
+            newy = self.tilecoordinatey - x
+            try:
+                if target == None:
+                    tiletarget = dungeon.map[newx][newy] ##Does the tile exist?
+                    for object in dungeon.objectlist: ##If so, is there an object on it?
+                        if object.xcoordinate == newx*32 and object.ycoordinate == newy*32:
+                            target = object
+                            print "I see: %s, at %s, %s" %(target, newx, newy)
+                            break
+                        else: 
+                            break                    
+           
+            except IndexError:
+                tiletarget = None
+                print "I generate index errors"
+                break
+        
+        ##Look down
+        for x in range(1,sensedistance):
+            x+1
+            newx = self.tilecoordinatex 
+            newy = self.tilecoordinatey + x
+            try:
+                if target == None:
+                    tiletarget = dungeon.map[newx][newy] ##Does the tile exist?
+                    for object in dungeon.objectlist: ##If so, is there an object on it?
+                        if object.xcoordinate == newx*32 and object.ycoordinate == newy*32:
+                            target = object
+                            print "I see: %s, at %s, %s" %(target, newx, newy)
+                            break
+                        else: 
+                            break                       
+            except IndexError:
+                tiletarget = None
+                print "I generate index errors"
+                break
+            
+            ##Look east
+        for x in range(1,sensedistance):
+            x+1
+            newx = self.tilecoordinatex + x
+            newy = self.tilecoordinatey 
+            try:
+                if target == None:
+                    tiletarget = dungeon.map[newx][newy] ##Does the tile exist?
+                    for object in dungeon.objectlist: ##If so, is there an object on it?
+                        if object.xcoordinate == newx*32 and object.ycoordinate == newy*32:
+                            target = object
+                            print "I see: %s, at %s, %s" %(target, newx, newy)
+                            break
+                        else: 
+                            break
+           
+            except IndexError:
+                tiletarget = None
+                print "I generate index errors"
+                break
+            
+            #Look West
+        for x in range(1,sensedistance):
+            x+1
+            newx = self.tilecoordinatex - x
+            newy = self.tilecoordinatey 
+            try:
+                if target == None:
+                    tiletarget = dungeon.map[newx][newy] ##Does the tile exist?
+                    for object in dungeon.objectlist: ##If so, is there an object on it?
+                        if object.xcoordinate == newx*32 and object.ycoordinate == newy*32:
+                            target = object
+                            print "I see: %s, at %s, %s" %(target, newx, newy)
+                            break
+                        else: 
+                            break
+                        
+            except IndexError:
+                tiletarget = None
+                print "I generate index errors"
+                break
+                    
+                #Look NorthEast
+        for x in range(1,sensedistance):
+            x+1
+            newx = self.tilecoordinatex + x
+            newy = self.tilecoordinatey + x
+            try:
+                if target == None:
+                    tiletarget = dungeon.map[newx][newy] ##Does the tile exist?
+                    for object in dungeon.objectlist: ##If so, is there an object on it?
+                        if object.xcoordinate == newx*32 and object.ycoordinate == newy*32:
+                            target = object
+                            print "I see: %s, at %s, %s" %(target, newx, newy)
+                            break
+                        else: 
+                            break
+           
+            except IndexError:
+                tiletarget = None
+                print "I generate index errors"
+                break
+                
+                #Look NorthWest
+        for x in range(1,sensedistance):
+            x+1
+            newx = self.tilecoordinatex - x
+            newy = self.tilecoordinatey + x
+            try:
+                if target == None:
+                    tiletarget = dungeon.map[newx][newy] ##Does the tile exist?
+                    for object in dungeon.objectlist: ##If so, is there an object on it?
+                        if object.xcoordinate == newx*32 and object.ycoordinate == newy*32:
+                            target = object
+                            print "I see: %s, at %s, %s" %(target, newx, newy)
+                            break
+                        else: 
+                            break
+           
+            except IndexError:
+                tiletarget = None
+                print "I generate index errors"
+                break
+                #Look SouthEast
+        for x in range(1,sensedistance):
+            x+1
+            newx = self.tilecoordinatex + x
+            newy = self.tilecoordinatey - x
+            try:
+                if target == None:
+                    tiletarget = dungeon.map[newx][newy] ##Does the tile exist?
+                    for object in dungeon.objectlist: ##If so, is there an object on it?
+                        if object.xcoordinate == newx*32 and object.ycoordinate == newy*32:
+                            target = object
+                            print "I see: %s, at %s, %s" %(target, newx, newy)
+                            break
+                        else: 
+                            break
+           
+            except IndexError:
+                tiletarget = None
+                print "I generate index errors"
+                break
+                
+                #Look SouthWest
+        for x in range(1,sensedistance):
+            x+1
+            newx = self.tilecoordinatex - x
+            newy = self.tilecoordinatey - x
+            try:
+                if target == None:
+                    tiletarget = dungeon.map[newx][newy] ##Does the tile exist?
+                    for object in dungeon.objectlist: ##If so, is there an object on it?
+                        if object.xcoordinate == newx*32 and object.ycoordinate == newy*32:
+                            target = object
+                            print "I see: %s, at %s, %s" %(target, newx, newy)
+                            break
+                        else: 
+                            break
+           
+            except IndexError:
+                tiletarget = None
+                print "I generate index errors"
+                break
+                    
+                
         
     def move(self, dx, dy, map, objectlist):
 

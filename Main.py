@@ -70,6 +70,7 @@ newdungeon.testing_Monsters(boardWidth,boardHeight,Rarity_Database,database,newd
 levelhandler.dungeonlist.append(newdungeon)
 
 
+
 stats=StatsMenu(player)
 #global log
 #log = Log()
@@ -310,10 +311,11 @@ while True:
             redrawLog() #Updates the log after each player turn
         else:
             if object.type == 'monster':
-                object.AI.Execute()
+                
+                object.look(levelhandler.dungeonlist[levelhandler.currentlevel])
                 #print(object.name + " growls") #Here, the monster will take their turn
             
-            pass
+            
             
 
 

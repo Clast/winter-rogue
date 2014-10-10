@@ -2,7 +2,9 @@ State = type("State", (object,),{})
 
 class Rest(State):
 	def Execute(self):
-		print "Resting"
+                ##Look for target. If Target found, goto Attack state.
+                self.target = 1
+		print self.target
 
 class Attack(State):
     def Execute(self):

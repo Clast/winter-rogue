@@ -61,8 +61,8 @@ class Dungeon:
     
     def testing_Monsters(self,boardWidth,boardHeight,Rarity_Database,Item_Database, objectlist):
         objectlist.append(Monster(10*32,5*32,'Freezy',100,10,1,'images/monsterlvl1.png',Rarity_Database,Item_Database))
-        objectlist.append(Monster(15*32,5*32,'Burny',100,10,1,'images/monsterlvl2.png',Rarity_Database,Item_Database))
-        objectlist.append(Monster(20*32,5*32,'Clyde',100,10,1,'images/monsterlvl3.png',Rarity_Database,Item_Database))
+        #objectlist.append(Monster(15*32,5*32,'Burny',100,10,1,'images/monsterlvl2.png',Rarity_Database,Item_Database))
+        #objectlist.append(Monster(20*32,5*32,'Clyde',100,10,1,'images/monsterlvl3.png',Rarity_Database,Item_Database))
     def room_Generation(self,width,height):#This function generates a completely random mapLVL with rooms of varying sizes
         numberofRooms=100#random.randint(1,(width-1)/5)
         numberofAttempts=1000
