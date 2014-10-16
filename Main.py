@@ -6,7 +6,7 @@ from Dungeon import *
 from Actor import *
 from Menu import *
 from Log import *
-from LevelHandler import *
+from LevelHandler import levelhandler
 
 #Database importing for Item_Database and Rarity Database
 database=Item_Database()
@@ -38,7 +38,6 @@ pygame.display.set_caption('Dev') #Window Title
 DISPLAYSURF.fill(WHITE) #Fill the screen area with white.
 
 #Create LevelHandler to keep track of dungeons and current floor
-levelhandler = LevelHandler()
 #Create new dungeon with the width and height specified.
 dungeon = Dungeon(boardWidth, boardHeight)
 
@@ -79,11 +78,11 @@ def drawMap(boardWidth, boardHeight):
 
     for y in xrange(boardHeight):
         for x in xrange(boardWidth):
-            DISPLAYSURF.blit(levelhandler.dungeonlist[levelhandler.currentlevel].map[x][y].Img, (levelhandler.dungeonlist[levelhandler.currentlevel].map[x][y].xcoordinate,levelhandler.dungeonlist[levelhandler.currentlevel].map[x][y].ycoordinate)) #Surface.Blit takes an image and a coordinate and then draws to that location.
+            DISPLAYSURF.blit(levelhandler.activelevel().map[x][y].Img, (levelhandler.activelevel().map[x][y].xcoordinate,levelhandler.activelevel().map[x][y].ycoordinate)) #Surface.Blit takes an image and a coordinate and then draws to that location.
 
     #Function to draw the objects to the board
 def drawObjects():
-    for object in levelhandler.dungeonlist[levelhandler.currentlevel].objectlist:
+    for object in levelhandler.activelevel().objectlist:
         DISPLAYSURF.blit(object.Img, (object.xcoordinate, object.ycoordinate))
 
 def redrawScreen():
@@ -104,24 +103,24 @@ def playersTurn(): #Pauses the game and allows the player to take a turn
             elif event.type == KEYDOWN:
                 if (event.key == K_o):
                     levelhandler.move_floor(-1)
-                    levelhandler.dungeonlist[levelhandler.currentlevel].objectlist.append(player)
+                    levelhandler.activelevel().objectlist.append(player)
                     redrawScreen()
 
                 if (event.key == K_p):
                     levelhandler.move_floor(1)
-                    levelhandler.dungeonlist[levelhandler.currentlevel].objectlist.append(player)
+                    levelhandler.activelevel().objectlist.append(player)
                     redrawScreen()
                 if (event.key == K_d):
-                    player.move(32,0,levelhandler.dungeonlist[levelhandler.currentlevel].map,levelhandler.dungeonlist[levelhandler.currentlevel].objectlist) #Modify the game state when some action is entered. The move function takes target coordinates, the map[] list of a Dungeon object (see Dungeon.py), and the object list.
+                    player.move(32,0) #Modify the game state when some action is entered. The move function takes target coordinates, the map[] list of a Dungeon object (see Dungeon.py), and the object list.
                     playersturn = False
                 if (event.key == K_a):
-                    player.move(-32,0,levelhandler.dungeonlist[levelhandler.currentlevel].map,levelhandler.dungeonlist[levelhandler.currentlevel].objectlist)
+                    player.move(-32,0)
                     playersturn = False
                 if (event.key == K_w):
-                    player.move(0,-32,levelhandler.dungeonlist[levelhandler.currentlevel].map,levelhandler.dungeonlist[levelhandler.currentlevel].objectlist)
+                    player.move(0,-32)
                     playersturn = False
                 if (event.key == K_s):
-                    player.move(0,32,levelhandler.dungeonlist[levelhandler.currentlevel].map,levelhandler.dungeonlist[levelhandler.currentlevel].objectlist)
+                    player.move(0,32)
                     playersturn = False
                 if (event.key == K_h):
                     print ('Some Bullshit')
@@ -274,8 +273,8 @@ def playersTurn(): #Pauses the game and allows the player to take a turn
                                     redrawScreen()
                                     paused = 0
 
-def speedAdjust(objectlist):
-    objectlist = sorted(levelhandler.dungeonlist[levelhandler.currentlevel].objectlist, key=lambda object:object.speed, reverse = True)
+def speedAdjust():
+    objectlist = sorted(levelhandler.activelevel().objectlist, key=lambda object:object.speed, reverse = True)
     return objectlist
 
 def redrawStats():
@@ -293,7 +292,7 @@ def redrawLog():
                 #3c) When you get to the player, pause the game and allow him to take his turn.
                 #3d) After everyone has taken their turns, refresh the screen with the new game state.
 
-levelhandler.dungeonlist[levelhandler.currentlevel].objectlist = speedAdjust(levelhandler.dungeonlist[levelhandler.currentlevel].objectlist) #Adjust the objects according to speed
+levelhandler.activelevel().objectlist = speedAdjust() #Adjust the objects according to speed
 redrawScreen() #First draw the screen
 redrawLog() #Updates the log after each player turn
 playersTurn() #Player ALWAYS gets first turn. This is to avoid a monster attacking you when you enter the level before you have a chance to respond or receiving an attack before the screen is drawn.
@@ -302,9 +301,9 @@ redrawLog() #Updates the log after each player turn
 
 while True:
 
-    levelhandler.dungeonlist[levelhandler.currentlevel].objectlist = speedAdjust(levelhandler.dungeonlist[levelhandler.currentlevel].objectlist)
+    levelhandler.activelevel().objectlist = speedAdjust()
 
-    for object in levelhandler.dungeonlist[levelhandler.currentlevel].objectlist:
+    for object in levelhandler.activelevel().objectlist:
         if object == player:
             playersTurn()
             redrawStats() #Updates the current player stats at the end of each turn
@@ -313,7 +312,9 @@ while True:
         else:
             if object.type == 'monster':
                 
-                object.look(levelhandler.dungeonlist[levelhandler.currentlevel])
+                object.look()
+                direction = [32,-32]
+                object.move(random.choice(direction),random.choice(direction))
                 #print(object.name + " growls") #Here, the monster will take their turn
             
             

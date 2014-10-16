@@ -5,9 +5,10 @@ from Map_Object import *
 from Menu import *
 from Log import *
 from StateMachine import *
-#from Main import *
+from LevelHandler import levelhandler
+
 #from Dungeon import *
-#from Main import *
+
 global log
 log = Log()
 class Actor(Map_Object):#Actor inherits from Map_Object to be able to post to the map
@@ -175,7 +176,7 @@ class Player(Actor):#This class is for only the user-created player
         print "GAME OVER"
         sys.exit(0)
 
-    def move(self, dx, dy, map, objectlist):
+    def move(self, dx, dy):
 
     #The move function is special in that it accepts the map and objectlist on which you are moving (along with the change in x and y). It follows the following basic structure:
     #1) Determine if anything exists at the destination, tile or object.
@@ -187,6 +188,8 @@ class Player(Actor):#This class is for only the user-created player
         newx = self.xcoordinate + dx
         newy = self.ycoordinate + dy
         mapincrement = 0 
+        map = levelhandler.activelevel().map
+        objectlist = levelhandler.activelevel().objectlist
 
         for row in map:
             for tile in row:#Check to see if the tile exists at new location, if so, assign the tile to tiletarget
@@ -277,11 +280,11 @@ class Monster(Actor):#This class contains standard stats and location variables 
         print "Total damage: %d" % self.damage
         print "Gold from killing", self.gold
     
-    def look(self, dungeon):
+    def look(self):
         sensedistance = 4 #Sight range is this value - 1
         target = None
         tiletarget = None
-        
+        dungeon = levelhandler.activelevel()
         
         ##THIS IS THE UGLIEST CODE I HAVE EVER WRITTEN, WARNING
         ##Look up
@@ -456,7 +459,7 @@ class Monster(Actor):#This class contains standard stats and location variables 
         if len(self.canSee) > 0:
             print self.canSee
         
-    def move(self, dx, dy, map, objectlist):
+    def move(self, dx, dy):
 
     #The move function is special in that it accepts the map and objectlist on which you are moving (along with the change in x and y). It follows the following basic structure:
     #1) Determine if anything exists at the destination, tile or object.
@@ -468,6 +471,8 @@ class Monster(Actor):#This class contains standard stats and location variables 
         newx = self.xcoordinate + dx
         newy = self.ycoordinate + dy
         mapincrement = 0 
+        map = levelhandler.activelevel().map
+        objectlist = levelhandler.activelevel().objectlist
 
         for row in map:
             for tile in row:#Check to see if the tile exists at new location, if so, assign the tile to tiletarget
@@ -488,8 +493,8 @@ class Monster(Actor):#This class contains standard stats and location variables 
             log.addEvent((1,"A monster is trying to move into an impassable tile!"))
         elif target is not None: #If there is a monster, attack it
             if target.__class__.__name__=='Player':
-                log.addEvent((1,"A monster attacks %s, dealing %s damage." % (target.name,self.total_damage)))
-                target.current_health=target.current_health-self.total_damage
+                log.addEvent((1,"A monster attacks %s, dealing %s damage." % (target.name,self.damage)))
+                target.current_health=target.current_health-self.damage
                 #if target.current_health<=0:
                  #   self.battleWin(target)
                   #  objectlist.remove(target)

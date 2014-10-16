@@ -10,7 +10,7 @@ class LevelHandler:
 
     def __init__(self):
 
-
+        
         self.dungeonlist = []
         self.currentlevel = -1
 
@@ -18,3 +18,7 @@ class LevelHandler:
         if (len(self.dungeonlist)	> 0):
             self.currentlevel = self.currentlevel + i
 
+    def activelevel(self):
+        return self.dungeonlist[self.currentlevel]
+
+levelhandler = LevelHandler()
