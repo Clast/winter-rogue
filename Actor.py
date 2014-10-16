@@ -22,6 +22,7 @@ class Actor(Map_Object):#Actor inherits from Map_Object to be able to post to th
 
 class Player(Actor):#This class is for only the user-created player
     def __init__(self, x, y, imgpath, name, health, attackdamage):
+        self.type = 'Player'
     #X and Y coordinates are set for the map
         self.xcoordinate = x
         self.ycoordinate = y
@@ -449,7 +450,11 @@ class Monster(Actor):#This class contains standard stats and location variables 
                 print "I generate index errors"
                 break
                     
-                
+        if target != None and target not in self.canSee:
+            self.canSee[target.type] = (target.xcoordinate,target.ycoordinate)
+            print self.canSee
+        if len(self.canSee) > 0:
+            print self.canSee
         
     def move(self, dx, dy, map, objectlist):
 

@@ -309,6 +309,7 @@ while True:
             playersTurn()
             redrawStats() #Updates the current player stats at the end of each turn
             redrawLog() #Updates the log after each player turn
+            redrawScreen
         else:
             if object.type == 'monster':
                 
